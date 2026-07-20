@@ -1,0 +1,376 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Tamil Movies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#cda15b;
+    --gold-bright:#e8c07d;
+    --crimson:#7a1f2b;
+    --crimson-bright:#a4283a;
+    --cream:#f2e8d8;
+    --dim:#a9998a;
+    --bg-deep:#0a0705;
+    --bg-panel:#171210;
+    --card:#1c1613;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(205,161,91,0.14), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 85% 15%, rgba(122,31,43,0.12), transparent 60%),
+      var(--bg-deep);
+    color:var(--cream);
+    font-family:'Poppins',sans-serif;
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* film grain */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    opacity:0.05;
+    mix-blend-mode:overlay;
+    background-image:
+      repeating-radial-gradient(circle at 0 0, transparent 0, rgba(255,255,255,0.4) 1px, transparent 2px),
+      repeating-radial-gradient(circle at 15px 20px, transparent 0, rgba(255,255,255,0.3) 1px, transparent 2px);
+    background-size:60px 60px, 45px 45px;
+    animation:grain 1.2s steps(4) infinite;
+  }
+  @keyframes grain{
+    0%{transform:translate(0,0);}
+    25%{transform:translate(-2%,1%);}
+    50%{transform:translate(1%,-2%);}
+    75%{transform:translate(-1%,2%);}
+    100%{transform:translate(0,0);}
+  }
+
+  /* vignette */
+  body::after{
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:2;
+    box-shadow:inset 0 0 18vw rgba(0,0,0,0.75);
+  }
+
+  header{
+    position:sticky;
+    top:0;
+    z-index:20;
+    padding:34px 20px 22px;
+    text-align:center;
+    background:linear-gradient(180deg, rgba(10,7,5,0.97) 0%, rgba(10,7,5,0.9) 70%, rgba(10,7,5,0) 100%);
+    border-bottom:1px solid rgba(205,161,91,0.25);
+  }
+
+  header::before{
+    content:'';
+    display:block;
+    height:10px;
+    margin:0 auto 24px;
+    max-width:900px;
+    background-image:radial-gradient(circle, var(--bg-deep) 3px, transparent 3.5px);
+    background-size:22px 10px;
+    background-repeat:repeat-x;
+    border-top:1px solid rgba(205,161,91,0.35);
+    border-bottom:1px solid rgba(205,161,91,0.35);
+  }
+
+  h2{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(34px,6vw,58px);
+    letter-spacing:6px;
+    margin:0 0 22px;
+    color:var(--gold-bright);
+    text-shadow:
+      0 0 18px rgba(232,192,125,0.55),
+      0 0 46px rgba(205,161,91,0.25);
+    animation:flicker 5s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{opacity:1;}
+    92%{opacity:1;}
+    93%{opacity:0.82;}
+    94%{opacity:1;}
+    96%{opacity:0.9;}
+    97%{opacity:1;}
+  }
+
+  .controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  input,select{
+    padding:11px 16px;
+    border-radius:2px;
+    border:1px solid rgba(205,161,91,0.4);
+    background:rgba(28,22,19,0.8);
+    color:var(--cream);
+    font-family:'Poppins',sans-serif;
+    font-size:14px;
+    outline:none;
+    transition:border-color .25s, box-shadow .25s;
+  }
+  input::placeholder{color:var(--dim);}
+  input:focus,select:focus{
+    border-color:var(--gold-bright);
+    box-shadow:0 0 0 3px rgba(232,192,125,0.15);
+  }
+  select{cursor:pointer;}
+
+  .grid{
+    position:relative;
+    z-index:5;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:26px;
+    padding:44px clamp(20px,5vw,64px) 80px;
+    max-width:1300px;
+    margin:0 auto;
+  }
+
+  .card{
+    position:relative;
+    background:linear-gradient(155deg, var(--card) 0%, #140f0d 100%);
+    border:1px solid rgba(205,161,91,0.18);
+    padding:18px 18px 16px;
+    text-align:center;
+    clip-path:polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+    opacity:0;
+    transform:translateY(46px) rotateX(6deg);
+    transition:transform .55s cubic-bezier(.22,.9,.34,1), opacity .55s ease, box-shadow .3s ease, border-color .3s ease;
+    transform-style:preserve-3d;
+  }
+
+  .card::before{
+    content:'';
+    position:absolute;
+    top:0;
+    right:0;
+    width:0;
+    height:0;
+    border-style:solid;
+    border-width:0 22px 22px 0;
+    border-color:transparent var(--bg-deep) transparent transparent;
+    transition:border-width .3s ease;
+  }
+
+  .card.visible{
+    opacity:1;
+    transform:translateY(0) rotateX(0deg);
+  }
+
+  .card:hover{
+    transform:translateY(-8px) scale(1.02);
+    border-color:rgba(232,192,125,0.55);
+    box-shadow:0 18px 34px rgba(0,0,0,0.55), 0 0 24px rgba(205,161,91,0.18);
+  }
+  .card:hover::before{
+    border-width:0 30px 30px 0;
+  }
+
+  .fav{
+    position:absolute;
+    top:8px;
+    right:8px;
+    cursor:pointer;
+    font-size:19px;
+    z-index:4;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+    transition:transform .25s ease;
+  }
+  .fav:hover{transform:scale(1.25);}
+
+  .frame{
+    position:relative;
+    margin:0 auto 12px;
+    padding:6px;
+    background:linear-gradient(155deg,#3a2c18,#1a130c);
+    border:1px solid rgba(205,161,91,0.55);
+    box-shadow:0 6px 16px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(0,0,0,0.4);
+  }
+  .frame::before,.frame::after,
+  .frame .corner-l,.frame .corner-r{
+    content:'';
+    position:absolute;
+    width:9px;
+    height:9px;
+    border:1px solid var(--gold-bright);
+    z-index:2;
+  }
+  .frame::before{top:2px;left:2px;border-right:none;border-bottom:none;}
+  .frame::after{top:2px;right:2px;border-left:none;border-bottom:none;}
+  .frame .corner-l{bottom:2px;left:2px;border-right:none;border-top:none;}
+  .frame .corner-r{bottom:2px;right:2px;border-left:none;border-top:none;}
+
+  .poster{
+    display:block;
+    width:100%;
+    height:200px;
+    object-fit:cover;
+    filter:sepia(0.25) contrast(1.05) brightness(0.9);
+    transition:filter .35s ease, transform .35s ease;
+  }
+  .card:hover .poster{
+    filter:sepia(0) contrast(1.1) brightness(1);
+    transform:scale(1.04);
+  }
+
+  .poster-fallback{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    height:200px;
+    font-size:34px;
+    background:linear-gradient(155deg,#2a201a,#171210);
+    color:var(--gold);
+  }
+
+  .card h3{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:1.5px;
+    font-size:21px;
+    margin:6px 0 8px;
+    color:var(--cream);
+    clear:both;
+  }
+
+  .card p{
+    margin:3px 0;
+    font-size:13px;
+    color:var(--dim);
+  }
+
+  .genre-tag{
+    display:inline-block;
+    margin-top:4px;
+    padding:2px 10px;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    border:1px solid rgba(205,161,91,0.4);
+    border-radius:2px;
+    color:var(--gold);
+  }
+
+  .rating{color:var(--gold-bright);font-weight:600;}
+
+  .card button{
+    margin-top:14px;
+    width:100%;
+    padding:9px;
+    background:transparent;
+    border:1px solid var(--gold);
+    color:var(--gold-bright);
+    letter-spacing:2px;
+    text-transform:uppercase;
+    font-size:11px;
+    cursor:pointer;
+    transition:background .25s ease, color .25s ease;
+  }
+  .card button:hover{
+    background:var(--gold);
+    color:#1a1310;
+  }
+
+  .modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(5,3,2,0.85);
+    z-index:50;
+    backdrop-filter:blur(3px);
+  }
+  .box{
+    background:linear-gradient(160deg,#1c1613,#100c0a);
+    max-width:420px;
+    margin:12% auto;
+    padding:30px 28px;
+    border:1px solid rgba(205,161,91,0.4);
+    clip-path:polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%);
+    animation:riseIn .35s ease;
+  }
+  @keyframes riseIn{
+    from{opacity:0;transform:translateY(24px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .box h2{font-size:30px;letter-spacing:3px;margin-bottom:14px;}
+  .box div{color:var(--dim);line-height:1.9;font-size:14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>🎬 Tamil Movie Explorer</h2>
+  <div class="controls">
+    <input id=q placeholder='Search'>
+    <select id=g><option>All</option><option>Action</option><option>Drama</option><option>Thriller</option></select>
+    <select id=s><option value=rating>Rating</option><option value=year>Year</option><option value=title>Title</option></select>
+  </div>
+</header>
+
+<div id=grid class=grid></div>
+
+<div id=m class=modal onclick="this.style.display='none'">
+  <div class=box onclick="event.stopPropagation()">
+    <h2 id=mt></h2>
+    <div id=md></div>
+  </div>
+</div>
+
+<script>
+const movies=[['Leo',2023,7.2,'Action'],['Jailer',2023,7.1,'Action'],['Vikram',2022,8.3,'Action'],['Jai Bhim',2021,8.7,'Drama'],['Soorarai Pottru',2020,8.7,'Drama'],['Maharaja',2024,8.4,'Thriller'],['Asuran',2019,8.4,'Drama'],['Thani Oruvan',2015,8.4,'Thriller'],['Visaranai',2015,8.4,'Drama'],['Kaaka Muttai',2015,8.4,'Drama'],['Pariyerum Perumal',2018,8.7,'Drama'],['Super Deluxe',2019,8.2,'Drama'],['Retro',2025,7.8,'Action'],['Dragon',2025,7.8,'Drama'],['Good Bad Ugly',2025,7.0,'Action'],['Tourist Family',2025,8.3,'Drama'],['Coolie',2025,6.0,'Action'],['Thug Life',2025,0,'Action'],['Parasakthi',2026,0,'Drama'],['Karuppu',2026,0,'Action'],['VidaaMuyarchi',2025,6.6,'Action'],['Mersal',2017,7.5,'Action'],['Ghajini',2005,8.4,'Thriller'],['Anniyan',2005,8.3,'Thriller'],['Baasha',1995,8.3,'Action']];
+
+let fav=JSON.parse(localStorage.fav||"[]");
+
+let observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.transitionDelay=(e.target.dataset.i*45)+'ms';
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+},{threshold:0.12});
+
+function render(){
+  let a=movies.filter(x=>x[0].toLowerCase().includes(q.value.toLowerCase())&&(g.value=='All'||x[3]==g.value));
+  a.sort((x,y)=>s.value=='year'?y[1]-x[1]:s.value=='title'?x[0].localeCompare(y[0]):y[2]-x[2]);
+  grid.innerHTML='';
+  a.forEach((x,i)=>{
+    let d=document.createElement('div');
+    d.className='card';
+    d.dataset.i=i;
+    let seed=encodeURIComponent(x[0].replace(/\s+/g,'-').toLowerCase());
+    d.innerHTML=`<span class=fav>${fav.includes(x[0])?'❤️':'🤍'}</span><div class="frame"><span class="corner-l"></span><span class="corner-r"></span><img class="poster" loading="lazy" src="https://picsum.photos/seed/${seed}/300/400" alt="${x[0]} poster" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'poster-fallback',textContent:'🎬'}))"></div><h3>${x[0]}</h3><p>${x[1]}</p><span class="genre-tag">${x[3]}</span><p class="rating">⭐ ${x[2]||'TBA'}</p><button>Details</button>`;
+    d.querySelector('.fav').onclick=e=>{e.stopPropagation();fav=fav.includes(x[0])?fav.filter(v=>v!=x[0]):[...fav,x[0]];localStorage.fav=JSON.stringify(fav);render()};
+    d.querySelector('button').onclick=()=>{mt.textContent=x[0];md.innerHTML=`Year:${x[1]}<br>Genre:${x[3]}<br>IMDb:${x[2]||'TBA'}`;m.style.display='block'};
+    grid.appendChild(d);
+    observer.observe(d);
+  });
+}
+[q,g,s].forEach(e=>e.oninput=render);
+render();
+</script>
+</body>
+</html>
